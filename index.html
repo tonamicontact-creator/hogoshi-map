@@ -967,8 +967,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <label class="file-btn">📥 読み込み(JSON)
         <input type="file" id="importFile" accept="application/json" class="hidden-input">
       </label>
-      <button id="exportJsonBtn">💾 保存(JSON)</button>
-      <button id="archiveJsonBtn" title="日付入りのファイル名で、記録用に別保存します">🗂️ 記録として保存(日付入り)</button>
+      <button id="exportJsonBtn" title="押すたびに日付・時刻入りの新しいファイルとして保存されます">💾 保存(JSON・日時付き)</button>
       <button id="exportCsvBtn">📄 CSV書き出し</button>
       <button id="printBtn" class="primary">🖨️ PDFレポート出力</button>
     </div>
@@ -1841,12 +1840,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
     URL.revokeObjectURL(url);
   }
 
-  document.getElementById("exportJsonBtn").addEventListener("click", function () {
-    downloadBlob(buildJsonBlob(), "hogoshi_data.json");
-  });
+  function pad2(n) { return String(n).padStart(2, "0"); }
 
-  document.getElementById("archiveJsonBtn").addEventListener("click", function () {
-    downloadBlob(buildJsonBlob(), "hogoshi_data_" + new Date().toISOString().slice(0, 10) + ".json");
+  function timestampForFilename() {
+    var d = new Date();
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()) +
+      "_" + pad2(d.getHours()) + pad2(d.getMinutes()) + pad2(d.getSeconds());
+  }
+
+  document.getElementById("exportJsonBtn").addEventListener("click", function () {
+    downloadBlob(buildJsonBlob(), "hogoshi_data_" + timestampForFilename() + ".json");
   });
 
   document.getElementById("exportCsvBtn").addEventListener("click", function () {
